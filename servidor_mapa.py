@@ -18,7 +18,7 @@ BASE_API = "https://scientists-pal-knife-chicago.trycloudflare.com"
 PORT = 8765
 DIR = os.path.dirname(os.path.abspath(__file__))
 
-ACTIVOS_PERMITIDOS = ["SPX", "NDX", "QQQ", "SPY", "IWM", "AAPL", "NVDA", "TSLA", "COIN", "VIX"]
+ACTIVOS_PERMITIDOS = ["SPX", "NDX", "QQQ", "SPY", "IWM", "AAPL", "NVDA", "TSLA", "COIN", "BTC", "ETH", "VIX"]
 
 
 def fetch_api(path):
