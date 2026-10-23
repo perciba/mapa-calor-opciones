@@ -1,6 +1,14 @@
-# Mapa de Calor · Opciones
+# Mapa de Calor · Opciones (Plan B)
 
-Dashboard local: Open Interest, Max Pain, GEX, **Gamma Flip** y gráfico de precio con niveles.
+Dashboard local **sin API propia ni API key**.
+
+## Fuente de datos
+
+| Dato | Fuente |
+|------|--------|
+| OI, gamma, cadena | **CBOE delayed** (~15 min) |
+| Max Pain, Walls, GEX, Flip | **Calculado en Python** |
+| Precio histórico | Yahoo Finance |
 
 ## Cómo usar
 
@@ -13,23 +21,25 @@ python3 servidor_mapa.py
 
 3. Abre http://127.0.0.1:8765
 
-**No abras el HTML con doble clic** — siempre el servidor.
+**No abras el HTML a doble clic** — siempre el servidor.
 
-## Incluye
+## Activos
 
-- Activos: NDX, QQQ, SPX, SPY, IWM, AAPL, NVDA, TSLA, COIN, BTC, ETH, VIX
-- Gamma Flip (cero GEX)
-- Lectura rápida GEX / PCR
-- Distancia % a niveles
-- **Gráfico de precio** (3 meses) con líneas: Spot, Flip, Max Pain, Call Wall, Put Wall
-- Pine Script para TradingView
-- Datos de opciones vía API original + precios vía Yahoo (gratis)
+NDX (vía QQQ), QQQ, SPX, SPY, IWM, AAPL, NVDA, TSLA, COIN, VIX.  
+BTC/ETH: solo precio (no hay cadena equity CBOE).
+
+## Qué calcula Python
+
+- **Max Pain** — strike que minimiza el valor de opciones al vencimiento
+- **Call Wall / Put Wall** — strikes con más open interest
+- **GEX** — exposición gamma aproximada (OI × gamma CBOE × convención dealers)
+- **Gamma Flip** — donde el GEX acumulado cruza cero
 
 ## Archivos
 
 | Archivo | Uso |
 |---------|-----|
-| `servidor_mapa.py` | Servidor + proxy API + `/api/precios` |
+| `servidor_mapa.py` | Backend Plan B |
 | `mapa_calor_live.html` | Dashboard |
 
 Uso educativo. No es consejo financiero.
