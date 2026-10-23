@@ -20,6 +20,12 @@ DIR = os.path.dirname(os.path.abspath(__file__))
 
 ACTIVOS_PERMITIDOS = ["SPX", "NDX", "QQQ", "SPY", "IWM", "AAPL", "NVDA", "TSLA", "COIN", "BTC", "ETH", "VIX"]
 
+YAHOO_MAP = {
+    "NDX": "QQQ", "QQQ": "QQQ", "SPX": "^GSPC", "SPY": "SPY", "IWM": "IWM",
+    "AAPL": "AAPL", "NVDA": "NVDA", "TSLA": "TSLA", "COIN": "COIN",
+    "BTC": "BTC-USD", "ETH": "ETH-USD", "VIX": "^VIX",
+}
+
 
 def fetch_api(path):
     url = BASE_API + path
@@ -52,6 +58,46 @@ class Handler(SimpleHTTPRequestHandler):
         parsed = urlparse(self.path)
         path = parsed.path
 
+        # Historial de precios (Yahoo, gratis) para el gráfico
+        if path == "/api/precios":
+            qs = parse_qs(parsed.query)
+            sym = (qs.get("s") or ["QQQ"])[0].upper()
+            ysym = YAHOO_MAP.get(sym, sym)
+            range_ = (qs.get("r") or ["3mo"])[0]
+            interval = (qs.get("i") or ["1d"])[0]
+            yurl = (
+                "https://query1.finance.yahoo.com/v8/finance/chart/"
+                + urllib.request.quote(ysym)
+                + f"?interval={interval}&range={range_}"
+            )
+            try:
+                req = urllib.request.Request(yurl, headers={"User-Agent": "Mozilla/5.0"})
+                with urllib.request.urlopen(req, timeout=12) as resp:
+                    raw = json.loads(resp.read().decode())
+                result = (raw.get("chart") or {}).get("result") or [None]
+                result = result[0]
+                if not result:
+                    raise ValueError("sin datos")
+                ts = result.get("timestamp") or []
+                quote = (result.get("indicators") or {}).get("quote") or [{}]
+                closes = (quote[0] or {}).get("close") or []
+                bars = []
+                for t, c in zip(ts, closes):
+                    if c is None:
+                        continue
+                    bars.append({"time": int(t), "value": float(c)})
+                body = json.dumps({"s": sym, "yahoo": ysym, "bars": bars}).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.end_headers()
+                self.wfile.write(body)
+            except Exception as e:
+                self.send_response(502)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+            return
+
         # Proxy de las APIs originales
         if path.startswith("/api/"):
             qs = parsed.query
@@ -78,18 +124,15 @@ class Handler(SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def log_message(self, format, *args):
-        # Log más limpio
         msg = format % args
         if "/api/" in msg or "activos" in msg:
             print(f"  {msg}")
 
 
 def main():
-    # Asegurar que el HTML exista
     html_path = os.path.join(DIR, "mapa_calor_live.html")
     if not os.path.exists(html_path):
         print("ERROR: No se encontró mapa_calor_live.html")
-        print("Ejecuta primero la generación del dashboard.")
         return
 
     server = HTTPServer(("127.0.0.1", PORT), Handler)
@@ -102,7 +145,6 @@ def main():
     print("  Ctrl+C para detener")
     print("=" * 55)
 
-    # Abrir navegador automáticamente
     def open_browser():
         time.sleep(0.8)
         webbrowser.open(url)
