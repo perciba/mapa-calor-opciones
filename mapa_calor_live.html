@@ -3,14 +3,15 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Mapa de Calor · Opciones (Live)</title>
+<title>Mapa de Calor · Opciones</title>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 <style>
 :root{--bg:#0b0f14;--card:#141b24;--border:#243041;--text:#e8eef6;--muted:#8b9cb3;--green:#22c55e;--red:#ef4444;--orange:#f59e0b;--accent:#06b6d4}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Segoe UI,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 header{background:linear-gradient(135deg,#0f172a,#1e293b);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;justify-content:space-between;position:sticky;top:0;z-index:50}
-header h1{font-size:1.2rem;font-weight:700;display:flex;align-items:center;gap:8px}
+header h1{font-size:1.15rem;font-weight:700;display:flex;align-items:center;gap:8px}
 .live-dot{width:9px;height:9px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .badge{font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:999px;background:#14532d;color:#4ade80}
@@ -21,46 +22,45 @@ button.copy{background:#1e293b;border-color:var(--accent);color:var(--accent);fo
 main{padding:16px 20px 40px;max-width:1500px;margin:0 auto}
 .status-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px;font-size:.8rem;color:var(--muted)}
 .err{color:var(--red);font-weight:600}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:12px 13px}
-.card .label{font-size:.7rem;color:var(--muted);text-transform:uppercase;margin-bottom:2px}
-.card .value{font-size:1.2rem;font-weight:700}
-.card .sub{font-size:.75rem;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:12px}
+.card .label{font-size:.68rem;color:var(--muted);text-transform:uppercase}
+.card .value{font-size:1.15rem;font-weight:700}
+.card .sub{font-size:.72rem;color:var(--muted)}
 .green{color:var(--green)}.red{color:var(--red)}.orange{color:var(--orange)}
 section{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px;margin-bottom:14px}
-section h2{font-size:.92rem;font-weight:600;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.zones{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
-.zone-box{background:#0b0f14;border-radius:9px;padding:11px 13px;border-left:4px solid}
+section h2{font-size:.9rem;font-weight:600;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.zones{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.zone-box{background:#0b0f14;border-radius:9px;padding:11px;border-left:4px solid}
 .zone-box.puts{border-color:var(--red)}.zone-box.calls{border-color:var(--green)}.zone-box.keys{border-color:var(--orange)}
-.zone-box h3{font-size:.78rem;margin-bottom:7px;color:var(--muted)}
-.zone-box ol{list-style:none}
-.zone-box li{padding:2px 0;font-size:.85rem;display:flex;justify-content:space-between;gap:6px}
-.heatmap-wrap{overflow:auto;max-height:460px}
-table.heatmap{width:100%;border-collapse:collapse;font-size:.78rem}
-table.heatmap th,table.heatmap td{padding:4px 7px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
-table.heatmap th{background:#0b0f14;color:var(--muted);position:sticky;top:0;z-index:2}
+.zone-box h3{font-size:.75rem;margin-bottom:6px;color:var(--muted)}
+.zone-box ol{list-style:none}.zone-box li{padding:2px 0;font-size:.84rem;display:flex;justify-content:space-between;gap:6px}
+.heatmap-wrap{overflow:auto;max-height:420px}
+table.heatmap{width:100%;border-collapse:collapse;font-size:.76rem}
+table.heatmap th,table.heatmap td{padding:4px 6px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
+table.heatmap th{background:#0b0f14;color:var(--muted);position:sticky;top:0}
 table.heatmap .price-col{text-align:right;font-weight:600}
 table.heatmap .spot-row td{border-top:2px solid var(--accent);border-bottom:2px solid var(--accent);background:rgba(6,182,212,.06)}
-.bar{display:inline-block;height:11px;border-radius:2px;min-width:3px;vertical-align:middle;margin-right:3px}
+.bar{display:inline-block;height:10px;border-radius:2px;min-width:3px;vertical-align:middle;margin-right:3px}
 .bar.put{background:var(--red)}.bar.call{background:var(--green)}
-#gexChart,#oiChart{width:100%;height:290px}
+#gexChart,#oiChart{width:100%;height:280px}#priceChart{width:100%;height:340px}
 .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
-.chip{font-size:.73rem;padding:3px 9px;border-radius:999px;background:#1e293b;border:1px solid var(--border);cursor:pointer;color:var(--muted)}
+.chip{font-size:.72rem;padding:3px 9px;border-radius:999px;background:#1e293b;border:1px solid var(--border);cursor:pointer;color:var(--muted)}
 .chip.active,.chip:hover{border-color:var(--accent);color:var(--accent)}
-.bias-box{border-radius:10px;padding:12px 14px;margin-bottom:14px;border:1px solid var(--border);background:#0b0f14;font-size:.88rem;line-height:1.5}
+.bias-box{border-radius:10px;padding:12px;margin-bottom:14px;border:1px solid var(--border);background:#0b0f14;font-size:.86rem;line-height:1.5}
 .bias-box strong{color:var(--accent)}
-.dist-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-top:8px}
-.dist-item{background:var(--card);border-radius:8px;padding:8px 10px;border:1px solid var(--border);text-align:center}
-.dist-item .d-lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase}
-.dist-item .d-val{font-size:1rem;font-weight:700;margin-top:2px}
+.dist-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-top:8px}
+.dist-item{background:var(--card);border-radius:8px;padding:8px;border:1px solid var(--border);text-align:center}
+.dist-item .d-lbl{font-size:.65rem;color:var(--muted);text-transform:uppercase}
+.dist-item .d-val{font-size:.95rem;font-weight:700;margin-top:2px}
 .tv-box{background:#0b0f14;border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:8px}
-.tv-levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:10px 0}
-.tv-level{background:var(--card);border-radius:8px;padding:10px 12px;border-left:3px solid var(--accent)}
-.tv-level .lbl{font-size:.7rem;color:var(--muted);text-transform:uppercase}
-.tv-level .val{font-size:1.05rem;font-weight:700;margin-top:2px}
+.tv-levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:10px 0}
+.tv-level{background:var(--card);border-radius:8px;padding:10px;border-left:3px solid var(--accent)}
+.tv-level .lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase}
+.tv-level .val{font-size:1rem;font-weight:700;margin-top:2px}
 .tv-level.put{border-color:var(--red)}.tv-level.call{border-color:var(--green)}.tv-level.pain{border-color:var(--orange)}
-pre.pine{background:#0a0e14;border:1px solid var(--border);border-radius:8px;padding:12px;font-size:.75rem;overflow-x:auto;color:#a5f3fc;max-height:220px;margin-top:8px;white-space:pre-wrap}
-.hint{font-size:.8rem;color:var(--muted);margin-top:8px;line-height:1.45}
+pre.pine{background:#0a0e14;border:1px solid var(--border);border-radius:8px;padding:12px;font-size:.74rem;overflow-x:auto;color:#a5f3fc;max-height:200px;margin-top:8px;white-space:pre-wrap}
+.hint{font-size:.78rem;color:var(--muted);margin-top:8px;line-height:1.4}
 .toast{position:fixed;bottom:20px;right:20px;background:#14532d;color:#bbf7d0;padding:10px 16px;border-radius:8px;font-size:.85rem;z-index:100;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}
 footer{text-align:center;padding:16px;color:var(--muted);font-size:.75rem}
@@ -90,17 +90,14 @@ footer{text-align:center;padding:16px;color:var(--muted);font-size:.75rem}
 <div class="chips" id="chips"></div>
 <div class="cards">
 <div class="card"><div class="label">Precio</div><div class="value" id="precio">—</div><div class="sub" id="precioSub">—</div></div>
-<div class="card"><div class="label">Zona cercana</div><div class="value" style="font-size:1rem" id="zonaCercana">—</div><div class="sub">Put · Call</div></div>
-<div class="card"><div class="label">Put/Call OI</div><div class="value" id="pcr">—</div><div class="sub">Open Interest</div></div>
-<div class="card"><div class="label">Máximo dolor</div><div class="value" id="maxPain">—</div><div class="sub">Max Pain</div></div>
+<div class="card"><div class="label">Zona cercana</div><div class="value" style="font-size:.95rem" id="zonaCercana">—</div><div class="sub">Put · Call</div></div>
+<div class="card"><div class="label">Put/Call OI</div><div class="value" id="pcr">—</div><div class="sub">OI</div></div>
+<div class="card"><div class="label">Max Pain</div><div class="value" id="maxPain">—</div><div class="sub">máx. dolor</div></div>
 <div class="card"><div class="label">Gamma Flip</div><div class="value" id="gammaFlip">—</div><div class="sub" id="gammaFlipSub">cero GEX</div></div>
 <div class="card"><div class="label">Gamma neta</div><div class="value" id="gamma">—</div><div class="sub" id="gammaSub">—</div></div>
 <div class="card"><div class="label">Mov. esperado</div><div class="value" id="mov">—</div><div class="sub" id="movSub">—</div></div>
 </div>
-<div class="bias-box" id="biasBox">
-<strong>Lectura rápida:</strong> <span id="biasText">Carga un activo.</span>
-<div class="dist-grid" id="distGrid"></div>
-</div>
+<div class="bias-box"><strong>Lectura:</strong> <span id="biasText">Carga un activo.</span><div class="dist-grid" id="distGrid"></div></div>
 <section>
 <h2>Zonas de calor</h2>
 <div class="zones">
@@ -110,6 +107,10 @@ footer{text-align:center;padding:16px;color:var(--muted);font-size:.75rem}
 </div>
 </section>
 <section>
+<h2>Precio + niveles <span style="font-size:.72rem;font-weight:400;color:var(--muted)">azul=spot · amarillo=flip · naranja=pain · verde=call · rojo=put</span></h2>
+<div id="priceChart"></div>
+</section>
+<section>
 <h2>TradingView
 <span style="display:flex;gap:6px;flex-wrap:wrap">
 <button class="copy" onclick="copiarNiveles()">Copiar niveles</button>
@@ -117,16 +118,16 @@ footer{text-align:center;padding:16px;color:var(--muted);font-size:.75rem}
 </span></h2>
 <div class="tv-box">
 <div class="tv-levels" id="tvLevels"></div>
-<p class="hint"><strong>TradingView:</strong> Copia Pine Script → Pine Editor → Añadir a gráfico (NQ1!, BTCUSDT, etc.).</p>
+<p class="hint"><strong>TradingView:</strong> Copia Pine → Pine Editor → Añadir a gráfico.</p>
 <pre class="pine" id="pineCode">// Carga un activo</pre>
 </div>
 </section>
-<section><h2>Open Interest por strike</h2><div id="oiChart"></div></section>
-<section><h2>Gamma Exposure por strike</h2><div id="gexChart"></div></section>
+<section><h2>Open Interest</h2><div id="oiChart"></div></section>
+<section><h2>Gamma Exposure</h2><div id="gexChart"></div></section>
 <section>
 <h2>Mapa OI</h2>
 <div class="heatmap-wrap">
-<table class="heatmap"><thead><tr><th>Precio</th><th>Puts OI</th><th>Calls OI</th><th>Net</th><th>GEX</th></tr></thead>
+<table class="heatmap"><thead><tr><th>Precio</th><th>Puts</th><th>Calls</th><th>Net</th><th>GEX</th></tr></thead>
 <tbody id="heatmapBody"></tbody></table>
 </div>
 </section>
@@ -134,13 +135,9 @@ footer{text-align:center;padding:16px;color:var(--muted);font-size:.75rem}
 <div class="toast" id="toast">Copiado</div>
 <footer>Uso educativo · No es consejo financiero</footer>
 <script>
-const ACTIVOS=[
-{s:'NDX',n:'Nasdaq 100 (NAS100)'},{s:'QQQ',n:'QQQ'},{s:'SPX',n:'S&P 500'},{s:'SPY',n:'SPY'},
-{s:'IWM',n:'IWM Russell'},{s:'AAPL',n:'Apple'},{s:'NVDA',n:'Nvidia'},{s:'TSLA',n:'Tesla'},
-{s:'COIN',n:'Coinbase'},{s:'BTC',n:'Bitcoin'},{s:'ETH',n:'Ethereum'},{s:'VIX',n:'VIX'}
-];
-const TV_MAP={NDX:'NAS100 / NQ1!',QQQ:'QQQ',SPX:'SPX / ES1!',SPY:'SPY',IWM:'IWM',AAPL:'AAPL',NVDA:'NVDA',TSLA:'TSLA',COIN:'COIN',BTC:'BTCUSDT',ETH:'ETHUSDT',VIX:'VIX'};
-let lastLevels=null;
+const ACTIVOS=[{s:'NDX',n:'Nasdaq 100'},{s:'QQQ',n:'QQQ'},{s:'SPX',n:'S&P 500'},{s:'SPY',n:'SPY'},{s:'IWM',n:'IWM'},{s:'AAPL',n:'Apple'},{s:'NVDA',n:'Nvidia'},{s:'TSLA',n:'Tesla'},{s:'COIN',n:'Coinbase'},{s:'BTC',n:'Bitcoin'},{s:'ETH',n:'Ethereum'},{s:'VIX',n:'VIX'}];
+const TV_MAP={NDX:'NQ1!',QQQ:'QQQ',SPX:'ES1!',SPY:'SPY',IWM:'IWM',AAPL:'AAPL',NVDA:'NVDA',TSLA:'TSLA',COIN:'COIN',BTC:'BTCUSDT',ETH:'ETHUSDT',VIX:'VIX'};
+let lastLevels=null,priceChart=null,priceSeries=null,priceLines=[];
 function init(){
 const sel=document.getElementById('ticker');
 sel.innerHTML=ACTIVOS.map(a=>'<option value="'+a.s+'">'+a.s+' — '+a.n+'</option>').join('');
@@ -161,11 +158,30 @@ let cum=0,prevK=sorted[0].k,prevCum=0;
 for(const r of sorted){prevCum=cum;cum+=Number(r.gex)||0;if(prevCum!==0&&(prevCum>0)!==(cum>0)){const t=Math.abs(prevCum)/(Math.abs(prevCum)+Math.abs(cum));return prevK+(r.k-prevK)*t;}prevK=r.k;}
 let best=sorted[0];for(const r of sorted){if(Math.abs(r.gex)<Math.abs(best.gex))best=r;}return best.k;
 }
+function clearPriceLines(){if(!priceSeries)return;priceLines.forEach(l=>{try{priceSeries.removePriceLine(l);}catch(_){}});priceLines=[];}
+function addLevelLine(price,color,title){if(!priceSeries||price==null||isNaN(price))return;priceLines.push(priceSeries.createPriceLine({price:Number(price),color:color,lineWidth:2,lineStyle:2,axisLabelVisible:true,title:title}));}
+async function renderPriceChart(ticker,levels){
+const el=document.getElementById('priceChart');
+if(!el||typeof LightweightCharts==='undefined')return;
+try{
+const r=await fetch('/api/precios?s='+encodeURIComponent(ticker)+'&r=3mo&i=1d');
+if(!r.ok)throw new Error('HTTP '+r.status);
+const data=await r.json();
+if(data.error||!data.bars||!data.bars.length)throw new Error(data.error||'sin barras');
+if(!priceChart){
+priceChart=LightweightCharts.createChart(el,{layout:{background:{color:'transparent'},textColor:'#8b9cb3'},grid:{vertLines:{color:'#243041'},horzLines:{color:'#243041'}},width:el.clientWidth,height:340,rightPriceScale:{borderColor:'#243041'},timeScale:{borderColor:'#243041'},crosshair:{mode:0}});
+priceSeries=priceChart.addAreaSeries({lineColor:'#06b6d4',topColor:'rgba(6,182,212,0.25)',bottomColor:'rgba(6,182,212,0.02)',lineWidth:2});
+window.addEventListener('resize',()=>{if(priceChart&&el)priceChart.applyOptions({width:el.clientWidth});});
+}
+const bars=data.bars.map(b=>({time:new Date(b.time*1000).toISOString().slice(0,10),value:b.value}));
+priceSeries.setData(bars);clearPriceLines();
+if(levels){addLevelLine(levels.gammaFlip,'#eab308','Flip');addLevelLine(levels.maxPain,'#f59e0b','MaxPain');addLevelLine(levels.callWall,'#22c55e','CallWall');addLevelLine(levels.putWall,'#ef4444','PutWall');addLevelLine(levels.spot,'#06b6d4','Spot');}
+priceChart.timeScale().fitContent();
+}catch(e){console.warn(e);el.innerHTML='<p style="color:#8b9cb3;padding:16px;font-size:.85rem">Sin gráfico: '+e.message+'</p>';priceChart=null;priceSeries=null;}
+}
 async function cargar(){
-const ticker=document.getElementById('ticker').value;
-const h=document.getElementById('horizon').value;
-const btn=document.getElementById('btn');
-const errEl=document.getElementById('stErr');
+const ticker=document.getElementById('ticker').value,h=document.getElementById('horizon').value;
+const btn=document.getElementById('btn'),errEl=document.getElementById('stErr');
 btn.disabled=true;btn.textContent='Cargando…';errEl.style.display='none';
 try{
 let pxVivo=null,fuente='';
@@ -174,7 +190,7 @@ const r=await fetch('/api/calor/datos?s='+ticker+'&h='+h+'&comb=1');
 if(!r.ok)throw new Error('API '+r.status);
 const d=await r.json();if(d.error)throw new Error(d.error);
 render(d,pxVivo,fuente);
-}catch(e){errEl.textContent='Error: '+e.message+' (python3 servidor_mapa.py)';errEl.style.display='inline';console.error(e);}
+}catch(e){errEl.textContent='Error: '+e.message+' (python3 servidor_mapa.py)';errEl.style.display='inline';}
 finally{btn.disabled=false;btn.textContent='Actualizar';}
 }
 function render(d,pxVivo,fuente){
@@ -207,13 +223,11 @@ document.getElementById('keyLevels').innerHTML=
 '<li><span></span><span>Max Pain</span><span class="orange">'+(res.max_dolor!=null?fmtPx(res.max_dolor):'—')+'</span></li>'+
 '<li><span></span><span>Call Wall</span><span class="green">'+(callWall?fmtPx(callWall.k):'—')+'</span></li>'+
 '<li><span></span><span>Put Wall</span><span class="red">'+(putWall?fmtPx(putWall.k):'—')+'</span></li>'+
-'<li><span></span><span>Spot</span><span>'+fmtPx(spot)+'</span></li>'+
-'<li><span></span><span>PCR vol</span><span>'+(res.pcr_v!=null?Number(res.pcr_v).toFixed(2):'—')+'</span></li>'+
-'<li><span></span><span>Venc.</span><span>'+(res.venc0||'—')+'</span></li>';
+'<li><span></span><span>Spot</span><span>'+fmtPx(spot)+'</span></li>';
 const parts=[];
-if(gex!=null)parts.push(gex>=0?'Gamma neta LARGA: amortigua movimientos.':'Gamma neta CORTA: amplifica movimientos.');
-if(gammaFlip!=null&&spot){const df=((gammaFlip-spot)/spot)*100;parts.push(df>0?'Gamma Flip '+Math.abs(df).toFixed(2)+'% arriba del precio.':'Gamma Flip '+Math.abs(df).toFixed(2)+'% abajo del precio.');}
-if(res.pcr_oi!=null){const p=Number(res.pcr_oi);if(p>1.2)parts.push('PCR OI alto ('+p.toFixed(2)+').');else if(p<0.8)parts.push('PCR OI bajo ('+p.toFixed(2)+').');else parts.push('PCR OI equilibrado ('+p.toFixed(2)+').');}
+if(gex!=null)parts.push(gex>=0?'Gamma LARGA: amortigua.':'Gamma CORTA: amplifica.');
+if(gammaFlip!=null&&spot){const df=((gammaFlip-spot)/spot)*100;parts.push('Flip '+Math.abs(df).toFixed(2)+'% '+(df>0?'arriba':'abajo')+'.');}
+if(res.pcr_oi!=null)parts.push('PCR OI '+Number(res.pcr_oi).toFixed(2)+'.');
 document.getElementById('biasText').textContent=parts.join(' ')||'Sin datos.';
 const distItems=[];
 function addDist(label,level,cls){if(level==null||!spot)return;const pct=((level-spot)/spot)*100;distItems.push('<div class="dist-item"><div class="d-lbl">'+label+'</div><div class="d-val '+cls+'">'+(pct>=0?'+':'')+pct.toFixed(2)+'%</div></div>');}
@@ -221,9 +235,9 @@ addDist('Max Pain',res.max_dolor,'orange');addDist('Gamma Flip',gammaFlip,'orang
 if(callWall)addDist('Call Wall',callWall.k,'green');if(putWall)addDist('Put Wall',putWall.k,'red');
 document.getElementById('distGrid').innerHTML=distItems.join('');
 lastLevels={ticker:d.id,tvSymbol:TV_MAP[d.id]||d.id,spot:spot,maxPain:res.max_dolor,gammaFlip:gammaFlip,callWall:callWall?callWall.k:null,putWall:putWall?putWall.k:null,putZones:topPuts.slice(0,3).map(r=>r.k),callZones:topCalls.slice(0,3).map(r=>r.k)};
-renderTV(lastLevels);
+renderTV(lastLevels);renderPriceChart(d.id,lastLevels);
 const tbody=document.getElementById('heatmapBody');tbody.innerHTML='';
-if(!filas.length){tbody.innerHTML='<tr><td colspan="5">Sin datos</td></tr>';}
+if(!filas.length)tbody.innerHTML='<tr><td colspan="5">Sin datos</td></tr>';
 else{
 const maxOI=Math.max(...filas.map(r=>Math.max(r.oi_c||0,r.oi_p||0)),1);
 const step=filas.length>1?Math.abs(filas[1].k-filas[0].k):1;
@@ -238,9 +252,9 @@ tbody.appendChild(tr);
 });
 }
 const strikes=filas.map(r=>r.k),oiP=filas.map(r=>r.oi_p||0),oiC=filas.map(r=>r.oi_c||0),gexV=filas.map(r=>r.gex||0);
-const baseLayout={paper_bgcolor:'transparent',plot_bgcolor:'transparent',font:{color:'#8b9cb3',size:11},margin:{t:14,r:14,b:38,l:48},xaxis:{title:'Strike',gridcolor:'#243041',zeroline:false},yaxis:{gridcolor:'#243041',zerolinecolor:'#8b9cb3'},shapes:[{type:'line',x0:spot,x1:spot,y0:0,y1:1,yref:'paper',line:{color:'#06b6d4',width:2,dash:'dot'}}]};
+const baseLayout={paper_bgcolor:'transparent',plot_bgcolor:'transparent',font:{color:'#8b9cb3',size:11},margin:{t:14,r:14,b:38,l:48},xaxis:{title:'Strike',gridcolor:'#243041',zeroline:false},yaxis:{gridcolor:'#243041'},shapes:[{type:'line',x0:spot,x1:spot,y0:0,y1:1,yref:'paper',line:{color:'#06b6d4',width:2,dash:'dot'}}]};
 if(gammaFlip!=null)baseLayout.shapes.push({type:'line',x0:gammaFlip,x1:gammaFlip,y0:0,y1:1,yref:'paper',line:{color:'#f59e0b',width:2,dash:'dash'}});
-Plotly.newPlot('oiChart',[{x:strikes,y:oiP,name:'Puts OI',type:'bar',marker:{color:'#ef4444'}},{x:strikes,y:oiC,name:'Calls OI',type:'bar',marker:{color:'#22c55e'}}],Object.assign({},baseLayout,{barmode:'relative',yaxis:Object.assign({},baseLayout.yaxis,{title:'OI'}),legend:{orientation:'h',y:1.12}}),{responsive:true,displayModeBar:false});
+Plotly.newPlot('oiChart',[{x:strikes,y:oiP,name:'Puts',type:'bar',marker:{color:'#ef4444'}},{x:strikes,y:oiC,name:'Calls',type:'bar',marker:{color:'#22c55e'}}],Object.assign({},baseLayout,{barmode:'relative',yaxis:Object.assign({},baseLayout.yaxis,{title:'OI'}),legend:{orientation:'h',y:1.12}}),{responsive:true,displayModeBar:false});
 Plotly.newPlot('gexChart',[{x:strikes,y:gexV,type:'bar',marker:{color:gexV.map(v=>v>=0?'#22c55e':'#ef4444')},name:'GEX'}],Object.assign({},baseLayout,{yaxis:Object.assign({},baseLayout.yaxis,{title:'GEX'})}),{responsive:true,displayModeBar:false});
 }
 function renderTV(L){
@@ -253,10 +267,9 @@ document.getElementById('tvLevels').innerHTML=
 '<div class="tv-level put"><div class="lbl">Put Wall</div><div class="val red">'+(L.putWall!=null?fmtPx(L.putWall):'—')+'</div></div>';
 const putH=(L.putZones||[]).map((k,i)=>'hline('+k+', "Put '+(i+1)+'", color=color.new(color.red,60))').join('\n');
 const callH=(L.callZones||[]).map((k,i)=>'hline('+k+', "Call '+(i+1)+'", color=color.new(color.green,60))').join('\n');
-const pine='//@version=5\nindicator("OI Levels · '+L.ticker+'", overlay=true)\n\ngammaFlip = '+(L.gammaFlip!=null?L.gammaFlip:'na')+'\nmaxPain  = '+(L.maxPain!=null?L.maxPain:'na')+'\ncallWall = '+(L.callWall!=null?L.callWall:'na')+'\nputWall  = '+(L.putWall!=null?L.putWall:'na')+'\n\nplot(gammaFlip, "Gamma Flip", color=color.yellow, linewidth=2)\nplot(maxPain, "Max Pain", color=color.orange, linewidth=2)\nplot(callWall, "Call Wall", color=color.green, linewidth=2)\nplot(putWall, "Put Wall", color=color.red, linewidth=2)\n\n'+putH+'\n'+callH+'\n';
-document.getElementById('pineCode').textContent=pine;
+document.getElementById('pineCode').textContent='//@version=5\nindicator("OI Levels · '+L.ticker+'", overlay=true)\n\ngammaFlip = '+(L.gammaFlip!=null?L.gammaFlip:'na')+'\nmaxPain = '+(L.maxPain!=null?L.maxPain:'na')+'\ncallWall = '+(L.callWall!=null?L.callWall:'na')+'\nputWall = '+(L.putWall!=null?L.putWall:'na')+'\n\nplot(gammaFlip, "Gamma Flip", color=color.yellow, linewidth=2)\nplot(maxPain, "Max Pain", color=color.orange, linewidth=2)\nplot(callWall, "Call Wall", color=color.green, linewidth=2)\nplot(putWall, "Put Wall", color=color.red, linewidth=2)\n\n'+putH+'\n'+callH+'\n';
 }
-function copiarNiveles(){if(!lastLevels)return showToast('Carga un activo');const L=lastLevels;const txt=['Activo: '+L.ticker,'Spot: '+L.spot,'Gamma Flip: '+(L.gammaFlip??'—'),'Max Pain: '+(L.maxPain??'—'),'Call Wall: '+(L.callWall??'—'),'Put Wall: '+(L.putWall??'—')].join('\n');navigator.clipboard.writeText(txt).then(()=>showToast('Niveles copiados'));}
+function copiarNiveles(){if(!lastLevels)return showToast('Carga un activo');const L=lastLevels;navigator.clipboard.writeText(['Activo: '+L.ticker,'Spot: '+L.spot,'Gamma Flip: '+(L.gammaFlip??'—'),'Max Pain: '+(L.maxPain??'—'),'Call Wall: '+(L.callWall??'—'),'Put Wall: '+(L.putWall??'—')].join('\n')).then(()=>showToast('Niveles copiados'));}
 function copiarPine(){navigator.clipboard.writeText(document.getElementById('pineCode').textContent).then(()=>showToast('Pine Script copiado'));}
 init();
 </script>
